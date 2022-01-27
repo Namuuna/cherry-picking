@@ -1,64 +1,52 @@
 import json
-from turtle import title
 from priority_map import AlertPriorities
-import 
+from input import alerts
+import time 
+import bisect 
+import operator
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 
-types_to_subtypes_relations = {
-    "AttackIndication": [
-        "BlackMarket",
-        "BotDataForSale",
-    ],
-    "DataLeakage": [
-        "ConfidentialDocumentLeakage",
-        "ConfidentialInformationExposed",
-        "CredentialsLeakage",
-        "ExposedMentionsOnGithub",
-    ],
-    "VIP": [
-    "BlackMarket",
-    ]
-}
+class CherryPicking:
+    def __init__(self):
+        self.priority_map = AlertPriorities.templates
+        self.type_weights = {}
+        self.ordered_list = {}
 
-priority_map = AlertPriorities.templates
+    def process_map(self):
+        title_weights = {}
 
-def process_map():
-    type_weights = {}
-    title_weights = {}
+        for priority, values  in self.priority_map.items():
+            for item in values:
+                temp = {}
+                #create type and title weights 
+                alert_type = item.get("alert_type")
+                alert_subtype = item.get("alert_subtype")
+                temp['Type'] = alert_type
+                temp['SubType'] = alert_subtype
+                self.type_weights[str(temp)] = 6 - priority
 
-    for priority, values  in priority_map.items():
-        for item in values:
-            #create type and title weights 
-            alert_type = item.get("alert_type")
-            alert_subtype = item.get("alert_subtype")
-            type_weights[",".join([alert_type,alert_subtype])] = 6 - priority 
-            titles = item.get("title_identifiers")
-            title_weights[",".join(titles)] = 6 - priority
-    print(type_weights)
-    print(title_weights)
+    def read_input(self):
+        for alert in alerts:
+            details = alert["Details"]
+            priority = self.type_weights[str(details)]
+            alert_id = alert["_id"]
+            self.ordered_list[alert_id] = priority
+        self.ordered_list = sorted(self.ordered_list.items(), key=operator.itemgetter(1))
 
-# def get_cos_similarity(inp1, inp2):
+    def get_top(self):
+        pass
 
+        
+def get_cosine(x,y):
+    pass
 
-# process_map()   
+obj = CherryPicking()
+obj.process_map()
+obj.read_input()
+obj.get_top()
     
-alerts = [
-        {
-            '_id': '000000001',
-            'Title': 'A company\'s confidential document was exposed publicly',
-            'Details': {
-                'Type': 'DataLeakage',
-                'SubType': 'ConfidentialDocumentLeakage'
-            }
-        },
-        {
-            '_id': '000000002',
-            'Title': 'A bot server with credentials for a company',
-            'Details': {
-                'Type': 'AttackIndication',
-                'SubType': 'BotDataForSale'
-            }
-        },
-]
+
 
 
 
