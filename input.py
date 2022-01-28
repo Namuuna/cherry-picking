@@ -20,23 +20,15 @@ alerts = [
             'Title': 'A company\'s exposed publicly',
             'Details': {
                 'Type': 'DataLeakage',
-                'SubType': 'ConfidentialDocumentLeakage'
+                'SubType': 'ConfidentialInformationExposed'
             }
         },
         {
             '_id': '000000004',
-            'Title': 'A bot server with credentials for a company',
+            'Title': 'A bot server with information for a company',
             'Details': {
                 'Type': 'AttackIndication',
                 'SubType': 'BotDataForSale'
-            }
-        },
-        {
-            '_id': '000000005',
-            'Title': 'Private information with github company.',
-            'Details': {
-                'Type': 'DataLeakage',
-                'SubType': 'ConfidentialDocumentLeakage'
             }
         },
 ]
